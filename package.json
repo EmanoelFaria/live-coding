@@ -1,0 +1,23 @@
+{
+  "name": "live-coding",
+  "version": "1.0.0",
+  "description": "project for live coding interview",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EmanoelFaria/live-coding.git"
+  },
+  "author": "Emanoel Faria",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/EmanoelFaria/live-coding/issues"
+  },
+  "homepage": "https://github.com/EmanoelFaria/live-coding#readme",
+  "dependencies": {
+    "jest": "^26.4.2",
+    "supertest": "^5.0.0"
+  }
+}
