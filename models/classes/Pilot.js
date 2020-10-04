@@ -1,5 +1,5 @@
 const interfaces = require('../interfaces');
-const People = require('./People');
+const { People } = require('./People');
 
 class Pilot extends People {
   static async notExists(pilotsIds) {

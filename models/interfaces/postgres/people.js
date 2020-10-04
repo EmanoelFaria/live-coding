@@ -38,7 +38,7 @@ people.init(
   {
     sequelize,
     modelName: 'people',
-    timestamps: false,
+    timestamps: true,
   }
 );
 
