@@ -10,7 +10,7 @@ class StarshipController {
   static async getAll(req, res) {
     try {
       const allStarships = await Starship.getAll();
-      res.send(allStarships).status(200);
+      res.responser(200, 'Starships successfully listed', allStarships);
     } catch (error) {
       res.responser(
         StarshipController._getErrorCode(error),
