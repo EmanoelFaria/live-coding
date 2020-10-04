@@ -19,8 +19,8 @@ app.get('/health', (_, res) => {
   res.send('OK').status(200);
 });
 
-app.use(authMiddleware);
 app.use(responserMiddleware);
+app.use(authMiddleware);
 app.use('/starship', starshipRouter);
 
 module.exports = app;
