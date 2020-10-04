@@ -4,7 +4,13 @@
 module.exports = function (req, res, next) {
   if (isGetRequest(req)) {
     if (validateHeaderToken(req)) return next();
-    else return res.sendStatus(401);
+    else
+      return res.responser(
+        401,
+        'Unauthorized, please check your Authorization Token',
+        {},
+        new Error('Unauthorized, please check your Authorization Token')
+      );
   }
 
   return next();
@@ -18,5 +24,5 @@ function isGetRequest(req) {
 }
 
 function validateHeaderToken(req) {
-  return req.header('Authorization') == process.env.API_TOKEN;
+  return req.header('Authorization') == `Basic ${process.env.API_TOKEN}`;
 }
