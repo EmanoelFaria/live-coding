@@ -39,7 +39,7 @@ A aplicação disponibiliza um serviço para criação e listagem de naves espac
 
 ### Basic **Authorization** API System
 
-A API utiliza o sistema básico de **_autorização_**. Ele valida se quem está fazendo um pedido tem acesso ou não ao recurso. Diferente de um sistema de **_autenticação_** que identificaria permissoes de acesso a recursos por usuários.
+A API utiliza o sistema básico de **_autorização_**. Ele valida se quem está fazendo um pedido tem acesso ou não ao recurso. Diferente de um sistema de **_autenticação_** que identificaria permissões de acesso à recursos por usuários.
 
 Os recursos marcados como _protected_ precisam necessariamente ter o header:
 
@@ -62,7 +62,7 @@ Exemplo de resposta para pedidos não autorizados:
 
 `GET /starship` - _protected_
 
-É usado para listagem de naves espaciais. Ele usa o sistema de Autorização Básico de API.
+É usado para listagem de naves espaciais.
 
 Exemplo de requisição:
 
@@ -130,7 +130,7 @@ Responsável por criar uma nova nave espacial. Ela deve seguir a estrutura de ob
 | model | string | sim |Modelo da Nave |
 | manufacturer | string | sim | Construtora |
 | passengers | number | sim | Numero de passageiros |
-| pilotsIds | [number] | não | array de ids dos pilotos da nave |
+| pilotsIds | [number] | não | Array de ids dos pilotos da nave |
 
 Exemplo de requisição:
 
@@ -203,3 +203,48 @@ Parametros Inválido:
     }
 }
 ```
+
+Recurso não encontrado
+
+```
+{
+    "error": {
+        "status": 404,
+        "message": "Recurso não encontrado."
+    }
+}
+```
+
+## Arquitetura da aplicação
+
+Dividi a aplicação em 3 principais pontos:
+
+### Routes e Middlewares
+
+Responsável por identificar os recursos expostos para o mundo em nossa api e validar os acessos a mesma, Atualmente estamos usando um sistema
+simples de autorização, porém, ao passar para um sistema de autenticação essa parte da aplicação tende a crescer.
+
+### Controllers
+
+Responsável por guardar todas as regras de negócio da aplicação, exemplo: caso a gente queira ao criar
+uma nova nave espacial acionar outros serviços, enviar uma mensagem pra uma fila, ou um e-mail de
+confirmação pro usuário, todas essas ações complementares à criação de uma nave ficariam no controller.
+
+Também é responsável por todo o gerenciamento de erros customizados gerados pelas classes utilizadas
+no mesmo.
+
+### Models
+
+Pensando em garantir uma maior manutenabilidade e testabilidade os models são separados em 3 partes:
+
+1. Classes: Responsáveis por guardar a lógica de manipulação de cada entidade, por ex: para criar uma nave precisamos
+   saber se ela ja existe, pra evitarmos enviarmos pro banco um dado que ja sabemos que dará erro de duplicidade. Precisamos
+   saber se os pilotos daquela nave existem. Precisam também saber se os dados enviados para criação são válidos e além disso depois
+   de criarmos a nave precisamos garantir que os respectivos pilotos estarão associados corretamente a ela, caso contrário será feito um rollback.
+
+2. Interfaces: Responsável por guardar as entidades que estamos nos relacionando, geralmente um banco de dados porém poderia ser qualquer outro serviço
+   de fornecimento/envio/criação de dados, como um sdk da aws de algum serviço. Ele precisa cumprir o contrato de implentações dos métodos da sua classe
+   da pasta "classes" abstraindo toda logica e especialização relacionada ao database/serviço.
+
+3. Validations: Responsável por guardar as validações de cada entidade, eles são mutáveis e estão diretamente ligados as classes e interfaces pois fazem
+   cumprir os requisitos especificados por elas de acordo com as necessidades da api.
