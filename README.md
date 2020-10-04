@@ -1,39 +1,39 @@
-<h1 align="center">Live Coding Interview</h1>
+<h1 align="center">Starships API</h1>
 
-## Prerequisites
+## Pré-requisitos
 
 - [Node.JS](https://nodejs.org/) version 10.13
 - [PostgresSQL](https://www.postgresql.org/) version 12.4
 
-## Running Project
+## Rodando o projeto
 
 ```
-# Clone this repo
+# Clone o repositório
 git clone https://github.com/EmanoelFaria/live-coding.git
 
-# Move to project folder
+# Va para a pasta do projeto
 cd live-coding
 
-# Install dependencies
+# Instale as dependências
 npm install
 
-# Create database
+# Crie o banco de dados
 NODE_ENV=development npx sequelize-cli db:create && \
   NODE_ENV=development npx sequelize-cli db:migrate && \
   NODE_ENV=development npx sequelize-cli db:seed:all
 
 
-# Run service in development mode
+# Rode o serviço em modo de desenvolvimento
 npm run dev
 ```
 
 ## Rodando os testes
 
 ```
-# Create database
+# Crie o banco de dados
 NODE_ENV=test npx sequelize-cli db:create
 
-# Run tests
+# Rode os testes
 npm run test
 ```
 
