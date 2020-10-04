@@ -1,0 +1,34 @@
+{
+  "name": "live-coding",
+  "version": "1.0.0",
+  "description": "project for live coding interview",
+  "main": "index.js",
+  "scripts": {
+    "dev": "NODE_ENV=development node bin/www",
+    "test": "NODE_ENV=test jest",
+    "pretest": "NODE_ENV=test npx sequelize-cli db:migrate"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EmanoelFaria/live-coding.git"
+  },
+  "author": "Emanoel Faria",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/EmanoelFaria/live-coding/issues"
+  },
+  "homepage": "https://github.com/EmanoelFaria/live-coding#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "compression": "^1.7.4",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "helmet": "^4.1.1",
+    "jest": "^26.4.2",
+    "pg": "^8.3.3",
+    "pg-hstore": "^2.3.3",
+    "sequelize": "^6.3.5",
+    "supertest": "^5.0.0",
+    "yup": "^0.29.3"
+  }
+}
