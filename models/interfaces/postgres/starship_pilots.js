@@ -11,12 +11,12 @@ class starship_pilots extends Sequelize.Model {
     });
     starship_pilots.belongsTo(models.starships, {
       as: 'starships',
-      foreignKey: 'id_startship',
+      foreignKey: 'id_starship',
     });
   }
 
-  static async createMultiPilots(startshipId, pilotsIds, transaction) {
-    const newPilots = pilotsIds.map((id) => ({ id_startship: startshipId, id_people: id }));
+  static async createMultiPilots(starshipId, pilotsIds, transaction) {
+    const newPilots = pilotsIds.map((id) => ({ id_starship: starshipId, id_people: id }));
     return await this.bulkCreate(newPilots, { transaction });
   }
 }
@@ -30,7 +30,7 @@ starship_pilots.init(
         key: 'id',
       },
     },
-    id_startship: {
+    id_starship: {
       type: Sequelize.INTEGER,
       references: {
         model: 'starships',
@@ -41,7 +41,7 @@ starship_pilots.init(
   {
     sequelize,
     modelName: 'starship_pilots',
-    timestamps: false,
+    timestamps: true,
   }
 );
 

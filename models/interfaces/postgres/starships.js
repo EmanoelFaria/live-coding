@@ -8,7 +8,7 @@ class starships extends Sequelize.Model {
     starships.belongsToMany(models.people, {
       through: 'starship_pilots',
       as: 'people',
-      foreignKey: 'id_startship',
+      foreignKey: 'id_starship',
     });
   }
 
@@ -40,7 +40,7 @@ class starships extends Sequelize.Model {
           );
         }
 
-        transaction.commit();
+        await transaction.commit();
         resolve(createdStarship);
       } catch (error) {
         transaction.rollback();
@@ -79,7 +79,7 @@ starships.init(
   {
     sequelize,
     modelName: 'starships',
-    timestamps: false,
+    timestamps: true,
   }
 );
 
