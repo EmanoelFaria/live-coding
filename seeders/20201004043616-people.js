@@ -5,7 +5,7 @@ module.exports = {
     return queryInterface.bulkInsert('people', [
       {
         gender: 'male',
-
+        id: 1,
         skin_color: 'fair',
         name: 'Luke Skywalker',
         height: 172,
@@ -15,7 +15,7 @@ module.exports = {
       },
       {
         gender: 'n/a',
-
+        id: 2,
         skin_color: 'gold',
         name: 'C-3PO',
         height: 167,
@@ -25,7 +25,7 @@ module.exports = {
       },
       {
         gender: 'n/a',
-
+        id: 3,
         skin_color: 'white, blue',
         name: 'R2-D2',
         height: 96,
@@ -35,7 +35,7 @@ module.exports = {
       },
       {
         gender: 'male',
-
+        id: 4,
         skin_color: 'white',
         name: 'Darth Vader',
         height: 202,
@@ -45,7 +45,7 @@ module.exports = {
       },
       {
         gender: 'female',
-
+        id: 5,
         skin_color: 'light',
         name: 'Leia Organa',
         height: 150,
@@ -55,7 +55,7 @@ module.exports = {
       },
       {
         gender: 'male',
-
+        id: 6,
         skin_color: 'light',
         name: 'Owen Lars',
         height: 178,
@@ -65,7 +65,7 @@ module.exports = {
       },
       {
         gender: 'female',
-
+        id: 7,
         skin_color: 'light',
         name: 'Beru Whitesun lars',
         height: 165,
@@ -75,7 +75,7 @@ module.exports = {
       },
       {
         gender: 'n/a',
-
+        id: 8,
         skin_color: 'white, red',
         name: 'R5-D4',
         height: 97,
@@ -85,7 +85,7 @@ module.exports = {
       },
       {
         gender: 'male',
-
+        id: 9,
         skin_color: 'light',
         name: 'Biggs Darklighter',
         height: 183,
@@ -95,7 +95,7 @@ module.exports = {
       },
       {
         gender: 'male',
-
+        id: 10,
         skin_color: 'fair',
         name: 'Obi-Wan Kenobi',
         height: 182,
