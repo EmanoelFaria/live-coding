@@ -5,7 +5,6 @@ const compression = require('compression');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
 
-const userRouter = require('./routes/user');
 const starshipRouter = require('./routes/starship');
 
 const authMiddleware = require('./middlewares/auth');
@@ -22,7 +21,6 @@ app.get('/health', (_, res) => {
 
 app.use(authMiddleware);
 app.use(responserMiddleware);
-app.use('/user', userRouter);
 app.use('/starship', starshipRouter);
 
 module.exports = app;
