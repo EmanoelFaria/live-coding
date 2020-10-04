@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const helmet = require('helmet');
 
 const starshipRouter = require('./routes/starship');
+const notFoundRouter = require('./routes/notFound');
 
 const authMiddleware = require('./middlewares/auth');
 const responserMiddleware = require('./middlewares/responser');
@@ -22,5 +23,6 @@ app.get('/health', (_, res) => {
 app.use(responserMiddleware);
 app.use(authMiddleware);
 app.use('/starship', starshipRouter);
+app.use(notFoundRouter);
 
 module.exports = app;
