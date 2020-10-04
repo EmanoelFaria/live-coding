@@ -5,6 +5,6 @@ const { DTO } = require('../middlewares/dto');
 const starshipBodyValidation = require('../models/validations/Startship');
 
 router.get('/', StarshipController.getAll);
-router.post('/', DTO.validate(starshipBodyValidation), StarshipController.createOne);
+router.post('/', StarshipController.createOne);
 
 module.exports = router;

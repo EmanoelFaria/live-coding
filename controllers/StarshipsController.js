@@ -3,6 +3,7 @@ const {
   StarShipAlreadyExistsError,
   StarshipPilotsNotExistsError,
   StarshipError,
+  StarshipInvalidBodyError,
 } = require('../models/classes/Starship');
 
 class StarshipController {
@@ -24,6 +25,7 @@ class StarshipController {
     try {
       const createdStarship = await Starship.createOne(req.body);
       const createdStarshipWithPilots = await Starship.getOne(createdStarship.id);
+
       res.responser(200, 'Starship successfully created', createdStarshipWithPilots);
     } catch (error) {
       res.responser(
@@ -38,6 +40,7 @@ class StarshipController {
   static _getErrorCode(error) {
     if (error instanceof StarShipAlreadyExistsError) return 409;
     if (error instanceof StarshipPilotsNotExistsError) return 422;
+    if (error instanceof StarshipInvalidBodyError) return 422;
     return 500;
   }
 

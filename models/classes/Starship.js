@@ -1,5 +1,6 @@
 const interfaces = require('../interfaces');
 const Pilot = require('./Pilot');
+const starshipSchema = require('../validations/Startship');
 
 class Starship {
   static async getAll() {
@@ -11,6 +12,10 @@ class Starship {
   }
 
   static async createOne(newStarship) {
+    await starshipSchema.validate(newStarship).catch((err) => {
+      throw new StarshipInvalidBodyError(err.message);
+    });
+
     const starShipAlreadyExists = await this.alreadyExists(newStarship);
     if (starShipAlreadyExists) throw new StarShipAlreadyExistsError();
 
@@ -47,9 +52,16 @@ class StarshipPilotsNotExistsError extends StarshipError {
   }
 }
 
+class StarshipInvalidBodyError extends StarshipError {
+  constructor(msg) {
+    super(msg);
+  }
+}
+
 module.exports = {
   Starship,
   StarShipAlreadyExistsError,
   StarshipPilotsNotExistsError,
+  StarshipInvalidBodyError,
   StarshipError,
 };
