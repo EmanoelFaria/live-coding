@@ -248,3 +248,24 @@ Pensando em garantir uma maior manutenabilidade e testabilidade os models são s
 
 3. Validations: Responsável por guardar as validações de cada entidade, eles são mutáveis e estão diretamente ligados as classes e interfaces pois fazem
    cumprir os requisitos especificados por elas de acordo com as necessidades da api.
+
+## Test de Stress
+
+Para rodar o teste de stress com o LoadTest basta executar os seguintes comandos:
+
+```
+npm install -g loadtest
+loadtest -H "Authorization: Basic <seu_token_aqui>" -n 100 -c 100 --rps 1000 http://localhost:3000/starship
+```
+
+#### Resultados:
+
+![loadtest](docs/loadtest_result.png)
+
+### Observações
+
+Pendências:
+
+- [ ] Desenho de arquitetura proposta pra aplicação junto com micro serviço de autenticação.
+- [ ] Docker compose pra facilitar a criação de ambiente de test e dev.
+- [ ] Completar o CRUD de starships.
