@@ -17,7 +17,7 @@ cd live-coding
 # Install dependencies
 npm install
 
-# create database
+# Create database
 NODE_ENV=development npx sequelize-cli db:create && \
   NODE_ENV=development npx sequelize-cli db:migrate && \
   NODE_ENV=development npx sequelize-cli db:seed:all
@@ -30,6 +30,10 @@ npm run dev
 ## Rodando os testes
 
 ```
+# Create database
+NODE_ENV=test npx sequelize-cli db:create
+
+# Run tests
 npm run test
 ```
 
