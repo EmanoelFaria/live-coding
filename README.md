@@ -14,6 +14,9 @@ git clone https://github.com/EmanoelFaria/live-coding.git
 # Va para a pasta do projeto
 cd live-coding
 
+#Crie um arquivo de config de desenvolvimento .env.development e preencha
+# de acordo com o arquivo .env.example do projeto.
+
 # Instale as dependências
 npm install
 
