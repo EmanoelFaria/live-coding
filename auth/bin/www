@@ -5,9 +5,12 @@ if(!process.env.NODE_ENV){
 }
 
 const dotenv = require('dotenv');
-const operation = dotenv.config({ path: `./.env.${process.env.NODE_ENV}` });
+console.log(`./.env.${process.env.NODE_ENV}`)
+console.log(__dirname)
+const operation = dotenv.config({ path: `${__dirname}/../.env.${process.env.NODE_ENV}` });
 
 if (operation.error) {
+  console.log(process.env.NODE_ENV)
   throw new Error(`Verify that .env file exists in the env folder and if the file format is equal to env/.env.example`);
 }
 
