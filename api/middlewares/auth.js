@@ -12,10 +12,10 @@ module.exports = async (req, res, next) => {
     //TODO: create custom erros for especific case from auth micro service
     console.log(error);
     return res.responser(
-      401,
-      'Unauthorized, please check your Authorization Token',
+      error.response.data.error.status || 500,
+      error.response.data.error.message || 'something went wrong',
       {},
-      new Error('Unauthorized, please check your Authorization Token')
+      error
     );
   }
 };
