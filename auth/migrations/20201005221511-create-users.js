@@ -8,21 +8,18 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      clientId: {
+      username: {
         type: Sequelize.STRING,
         allowNull: false,
         unique: true,
       },
-      ip: {
-        type: Sequelize.STRING,
-      },
-      token: {
+      password: {
         type: Sequelize.STRING,
         allowNull: false,
         unique: true,
       },
       accessToken: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING(500),
         allowNull: false,
         unique: true,
       },
