@@ -1,28 +1,40 @@
+const axios = require('axios');
+
 /**
  * @description check request on available types: options, internal service or user.
  */
-module.exports = function (req, res, next) {
-  if (isGetRequest(req)) {
-    if (validateHeaderToken(req)) return next();
-    else
-      return res.responser(
-        401,
-        'Unauthorized, please check your Authorization Token',
-        {},
-        new Error('Unauthorized, please check your Authorization Token')
-      );
+module.exports = async (req, res, next) => {
+  const url = `${process.env.AUTH_SERVICE_URL}/auth/validate`;
+  try {
+    const response = await axios.post(url, _generateValidationBody(req));
+    next();
+  } catch (error) {
+    //TODO: create custom erros for especific case from auth micro service
+    console.log(error);
+    return res.responser(
+      401,
+      'Unauthorized, please check your Authorization Token',
+      {},
+      new Error('Unauthorized, please check your Authorization Token')
+    );
   }
-
-  return next();
 };
 
-/**
- * @description check if request has method "options" and its not internal service
- */
-function isGetRequest(req) {
-  return req.method === 'GET' ? true : false;
+function _getAccessTokenFromAuthorizationToken(AuthorizationToken) {
+  if (!AuthorizationToken) return '';
+  return AuthorizationToken.replace('Basic', '').trim();
 }
 
-function validateHeaderToken(req) {
-  return req.header('Authorization') == `Basic ${process.env.API_TOKEN}`;
+function _getResourceFromUrl(url) {
+  return url.split('/').slice(1)[0];
 }
+
+function _generateValidationBody(req) {
+  return {
+    method: req.method,
+    resource: _getResourceFromUrl(req.originalUrl),
+    accessToken: _getAccessTokenFromAuthorizationToken(req.header('Authorization')),
+  };
+}
+
+async function validateLocal() {}
