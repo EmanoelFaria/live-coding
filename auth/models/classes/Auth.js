@@ -1,46 +1,88 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const UserClass = require('./User');
-const User = new UserClass();
+const { User } = require('./User');
+const UserModel = new User();
 
 class Auth {
-  static async encrypt(text) {
-    const salt = await this.generateSalt();
+  static async signUp(newUser) {
+    const password = await Auth._encrypt(newUser.password);
+    const accessToken = await Auth._generateAccessToken(
+      this._sanitizeUserDataForAccessToken(newUser)
+    );
+    await UserModel.createOne({ ...newUser, password, accessToken });
+    delete newUser['password'];
+    return { ...newUser };
+  }
+
+  static async signIn(receivedUser) {
+    const user = await UserModel.getOneByUsername(receivedUser.username);
+    await this._validateReceivedPassword(receivedUser.password, user.password);
+    const newAccessToken = await Auth._generateAccessToken(
+      this._sanitizeUserDataForAccessToken(user)
+    );
+    await Auth._updateAccessToken(user.username, newAccessToken);
+    return { accessToken: newAccessToken };
+  }
+
+  static async updatePermissions(userId, updatedUser) {
+    await UserModel.updatePermissions(userId, updatedUser);
+    const newUser = await UserModel.getOneById(userId);
+    const newAccessToken = await Auth._generateAccessToken(
+      this._sanitizeUserDataForAccessToken(newUser)
+    );
+    await Auth._updateAccessToken(newUser.username, newAccessToken);
+
+    return newUser;
+  }
+
+  static async validateAccessToken(accessToken, method, resource) {
+    this._validateMalformedAccessToken(accessToken);
+    await this._validateNewestAccessToken(accessToken, accessToken);
+    const accessTokenData = await this._getAccessTokenData(accessToken);
+    this._validateMethodAndResourcePermission(accessTokenData.permissions, method, resource);
+    return;
+  }
+
+  static async _encrypt(text) {
+    const salt = await this._generateSalt();
     const hash = await bcrypt.hash(text, salt);
     return hash;
   }
 
-  static async compare(text, hash) {
+  static async _compare(text, hash) {
     return await bcrypt.compare(text, hash);
   }
 
-  static generateSalt() {
+  static _generateSalt() {
     const saltRounds = 10;
     return bcrypt.genSalt(saltRounds);
   }
 
-  static generateAccessToken(data) {
+  static _generateAccessToken(data) {
     return jwt.sign(data, process.env.AUTH_SECRET);
   }
 
-  static invalidateAccessToken(clientId, newAccessToken) {
-    return User.updateByClientId(clientId, { accessToken: newAccessToken });
+  static _updateAccessToken(username, newAccessToken) {
+    return UserModel.updateByUsername(username, { accessToken: newAccessToken });
   }
 
-  static async _getAccessTokenData(accessToken) {
+  static _getAccessTokenData(accessToken) {
+    return jwt.verify(accessToken, process.env.AUTH_SECRET);
+  }
+
+  static _validateMalformedAccessToken(accessToken) {
     try {
-      const accessTokenData = jwt.verify(accessToken, process.env.AUTH_SECRET);
-      await this._validateNewestAccessToken(accessTokenData.clientId, accessToken);
-      return accessTokenData;
+      return this._getAccessTokenData(accessToken);
     } catch (error) {
-      if (error instanceof AuthError) throw new Error(error);
-      throw new InvalidAccessToken();
+      throw new InvalidAccessTokenAuthError();
     }
   }
 
-  static async _validateNewestAccessToken(clientId, receivedAccessToken) {
-    const user = await User.getOneByClientId(clientId);
-    if (user.accessToken != receivedAccessToken) throw new WrongAccessToken(user.updatedAt);
+  static async _validateNewestAccessToken(accessToken, receivedAccessToken) {
+    const data = this._getAccessTokenData(accessToken);
+    const user = await UserModel.getOneByUsername(data.username);
+    if (user.accessToken != receivedAccessToken)
+      throw new WrongAccessTokenAuthError(user.updatedAt);
     return;
   }
 
@@ -54,10 +96,17 @@ class Auth {
     return;
   }
 
-  static async validateAccessToken(accessToken, method, resource) {
-    const accessTokenData = await this._getAccessTokenData(accessToken);
-    this._validateMethodAndResourcePermission(accessTokenData.permissions, method, resource);
+  static async _validateReceivedPassword(receivedToken, userToken) {
+    const isValidToken = await Auth._compare(receivedToken, userToken);
+    if (!isValidToken) throw new InvalidUsernameOrPasswordAuthError();
     return;
+  }
+
+  static _sanitizeUserDataForAccessToken(user) {
+    return {
+      username: user.username,
+      permissions: user.permissions,
+    };
   }
 }
 
@@ -67,13 +116,21 @@ class AuthError extends Error {
   }
 }
 
-class WrongAccessToken extends AuthError {
+class WrongAccessTokenAuthError extends AuthError {
   constructor(date) {
-    super(`You have changed your Access Token at: ${date}`);
+    const formattedDate = new Date(date).toLocaleDateString('en-US');
+    super(
+      `You have changed your Access Token at: ${formattedDate}, consider sign In again and create a new one`
+    );
   }
 }
 
-class InvalidAccessToken extends AuthError {
+class InvalidUsernameOrPasswordAuthError extends AuthError {
+  constructor() {
+    super('Invalid Username or Password');
+  }
+}
+class InvalidAccessTokenAuthError extends AuthError {
   constructor() {
     super('Invalid Access Token');
   }
@@ -85,4 +142,4 @@ class PermissionNotFoundAuthError extends AuthError {
   }
 }
 
-module.exports = { Auth, InvalidAccessToken, WrongAccessToken, AuthError };
+module.exports = { Auth, InvalidUsernameOrPasswordAuthError, WrongAccessTokenAuthError, AuthError };

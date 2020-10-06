@@ -4,17 +4,45 @@ class User {
     else this.model = require(`../interfaces`)['User'];
   }
 
-  createOne(newUser) {
-    return this.model.createOne(newUser);
+  async createOne(newUser) {
+    await this.model.createOne(newUser);
   }
 
-  getOneByClientId(clientId) {
-    return this.model.find({ clientId });
+  async getOneByUsername(username) {
+    const requestedUser = await this.model.find({ username });
+    if (requestedUser) return requestedUser;
+    throw new NotFoundUserError();
   }
 
-  updateByClientId(clientId, data) {
-    return this.model.updateByFilter(data, { clientId });
+  async getOneById(id) {
+    return this.getOneByFilter({ id });
+  }
+
+  async getOneByFilter(filter) {
+    const requestedUser = await this.model.find(filter);
+    if (requestedUser) return requestedUser;
+    throw new NotFoundUserError();
+  }
+
+  updatePermissions(userId, updatedUser) {
+    return this.model.updatePermissions(userId, updatedUser);
+  }
+
+  updateByUsername(username, data) {
+    return this.model.updateByFilter(data, { username });
   }
 }
 
-module.exports = User;
+class UserError extends Error {
+  constructor(msg) {
+    super(msg);
+  }
+}
+
+class NotFoundUserError extends UserError {
+  constructor(msg) {
+    super('User not Found');
+  }
+}
+
+module.exports = { User, NotFoundUserError, UserError };

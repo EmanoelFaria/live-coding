@@ -1,6 +1,11 @@
-const { Auth, InvalidAccessToken, WrongAccessToken, AuthError } = require('../models/classes/Auth');
-const UserClass = require('../models/classes/User');
-const User = new UserClass(null);
+const {
+  Auth,
+  InvalidUsernameOrPasswordAuthError,
+  WrongAccessTokenAuthError,
+  AuthError,
+} = require('../models/classes/Auth');
+const { User, NotFoundUserError, UserError } = require('../models/classes/User');
+const UserModel = new User();
 
 class AuthController {
   static async validate(req, res) {
@@ -8,7 +13,7 @@ class AuthController {
 
     try {
       await Auth.validateAccessToken(accessToken, method, resource);
-      res.responser(200, 'Authorized', {});
+      res.responser(200, `/${method} ${resource} Authorized`, {});
     } catch (error) {
       res.responser(
         AuthController._getErrorCode(error),
@@ -20,49 +25,58 @@ class AuthController {
   }
 
   static async signUp(req, res) {
-    const { clientId } = req.body;
-    const privateUserToken = await Auth.generateSalt();
-    const encryptedUserToken = await Auth.encrypt(privateUserToken);
-
-    const accessTokenData = { clientId, permissions };
-
-    const accessToken = await Auth.generateAccessToken(accessTokenData);
-
     try {
-      await User.createOne({ clientId, token: encryptedUserToken, accessToken });
-      res.send({ clientId, token: privateUserToken });
+      const signUpUser = await Auth.signUp(req.body);
+      res.responser(200, `New user successfully created`, signUpUser);
     } catch (error) {
-      console.log(error);
-      res.status(500).send(error.message);
+      res.responser(
+        AuthController._getErrorCode(error),
+        AuthController._getErrorMessage(error),
+        {},
+        error
+      );
     }
   }
 
   static async signIn(req, res) {
-    const { clientId, token } = req.body;
-    const user = await User.getOneByClientId(clientId);
-    const isValidToken = await Auth.compare(token, user.token);
+    try {
+      const signUpUser = await Auth.signIn(req.body);
+      res.responser(200, `New user successfully created`, signUpUser);
+    } catch (error) {
+      res.responser(
+        AuthController._getErrorCode(error),
+        AuthController._getErrorMessage(error),
+        {},
+        error
+      );
+    }
+  }
 
-    if (!isValidToken) return res.status(401).send('Invalid token');
-
-    const accessTokenData = {
-      clientId: user.clientId,
-      permissions: user.permissions,
-    };
-
-    const accessToken = await Auth.generateAccessToken(accessTokenData);
-    await Auth.invalidateAccessToken(user.clientId, accessToken);
-
-    return res.send({ accessToken }).status(200);
+  static async updateUserPermissions(req, res) {
+    try {
+      const updatedUser = await Auth.updatePermissions(req.params.id, req.body);
+      const { username, permissions } = updatedUser;
+      res.responser(200, `User successfully updated`, { username, permissions });
+    } catch (error) {
+      res.responser(
+        AuthController._getErrorCode(error),
+        AuthController._getErrorMessage(error),
+        {},
+        error
+      );
+    }
   }
 
   static _getErrorCode(error) {
-    if (error instanceof InvalidAccessToken) return 500;
-    if (error instanceof WrongAccessToken) return 500;
+    if (error instanceof InvalidUsernameOrPasswordAuthError) return 500;
+    if (error instanceof WrongAccessTokenAuthError) return 500;
+    if (error instanceof NotFoundUserError) return 500;
     return 500;
   }
 
   static _getErrorMessage(error) {
     if (error instanceof AuthError) return error.message;
+    if (error instanceof UserError) return error.message;
     return 'something went wrong';
   }
 }
