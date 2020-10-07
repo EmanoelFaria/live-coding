@@ -3,4 +3,5 @@ auth/node_modules
 api/.env.*
 auth/.env.*
 .vscode
+node_modules
 
