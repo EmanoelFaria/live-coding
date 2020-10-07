@@ -41,7 +41,7 @@ class UserError extends Error {
 
 class NotFoundUserError extends UserError {
   constructor(msg) {
-    super('User not Found');
+    super('User not Found. Verify your Access Token');
   }
 }
 
