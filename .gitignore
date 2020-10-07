@@ -1,4 +1,7 @@
-node_modules
+api/node_modules
+auth/node_modules
+api/.env.*
+auth/.env.*
 .vscode
-.env.development
-.env.test
+node_modules
+
