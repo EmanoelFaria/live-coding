@@ -67,6 +67,35 @@ class starships extends Sequelize.Model {
     //TODO: validate filters fields, its a name/model/manufacturer/passengers etc
     return await this.findOne({ where: filters });
   }
+
+  //THIS IS NOT FOR PRODUCTION JUST FOR TEST PURPOSES - SEQUELIZE BUG ON SEEDS CONSTRAINTS
+  static async bugFixForSequelizeSeedErrorCosntraints() {
+    setTimeout(async () => {
+      let counter = 0;
+      const count = await this.count();
+      if (count > 15) {
+        console.log('FINISH LOADING APPLICATION');
+        counter = 10;
+        return;
+      }
+
+      while (counter < 10) {
+        try {
+          await this.createOne({
+            passengers: 600,
+            model: 'CR90 corvette',
+            manufacturer: 'Gallofree Yards, Inc.',
+            name: 'CR90 corvette',
+            pilotsIds: [1, 2, 3],
+          });
+        } catch (error) {}
+
+        counter += 1;
+      }
+      console.log('FINISH LOADING APPLICATION');
+    }, 1000 * 50);
+    return;
+  }
 }
 
 starships.init(

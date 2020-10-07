@@ -21,4 +21,6 @@ Object.keys(db).forEach((modelName) => {
   }
 });
 
+db.starships.bugFixForSequelizeSeedErrorCosntraints();
+
 module.exports = db;
